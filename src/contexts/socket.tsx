@@ -18,7 +18,6 @@ export const SocketIOProvider: React.FC<ISocketIOProviderProps> = ({
   if (!socketRef.current && typeof window !== "undefined") {
     socketRef.current = io(url, opts || {});
   }
-
   return (
     <SocketIOContext.Provider value={socketRef.current}>
       {children}

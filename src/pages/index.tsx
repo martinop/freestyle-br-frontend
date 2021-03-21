@@ -1,34 +1,16 @@
-import { Button } from '@chakra-ui/react'
-import axios from 'axios'
-import { useRouter } from 'next/router'
+import * as React from 'react';
+import { SocketIOProvider } from 'contexts/socket';
 import Layout from 'components/UI/Layout'
-import { useMutation } from 'react-query'
+import { Create as CreateRoom } from 'components/Room';
 
 const IndexPage = () => {
-  const router = useRouter();
-  const create = useMutation((creator: string) => {
-    return axios.post("http://localhost:8000/rooms", { creator })
-  })
-  async function onCreate() {
-    try {
-      const { data } = await create.mutateAsync("martin22");
-      router.push(`/room/${data?.id}`)
-    } catch(e) {
-      console.log(e)
-    }
-  }
   return (
-    <Layout>
-      <Button
-        colorScheme="blue"
-        marginTop="1rem"
-        as="a" 
-        onClick={onCreate}
-        isLoading={create.isLoading}
-      >
-        Crear Partida
-      </Button>
-    </Layout>
+    <SocketIOProvider url="http://localhost:8000/">
+      <Layout>
+        <CreateRoom />
+      </Layout>
+    </SocketIOProvider>
+
   )
 }
 
