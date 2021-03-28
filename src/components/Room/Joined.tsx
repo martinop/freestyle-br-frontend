@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Box, Button, Grid, Text } from '@chakra-ui/react';
+import { Box, Button, Grid, Badge, Text, Wrap } from '@chakra-ui/react';
 import { Permission } from 'types';
 import { useRouter } from 'next/router';
-import { SocketIOContext } from 'contexts/socket';
+import useSocketEvent from 'hooks/useSocketEvent';
 
 type JoinedProps = {
 	permission: Permission;
@@ -11,7 +11,11 @@ type JoinedProps = {
 const Creator: React.FC = () => {
 	const router = useRouter()
 	const roomId = router.query?.id;
-	const socket = React.useContext(SocketIOContext);
+	const [users, setUsers] = React.useState<string[]>([]);
+	const { socket } = useSocketEvent("user-join", ({ userId }) => {
+		console.log(userId)
+		setUsers([...users, userId])
+	})
 
 	function onStart() {
 		socket?.emit("start-game", { roomId })
@@ -27,7 +31,14 @@ const Creator: React.FC = () => {
 					Iniciar Partida
 				</Button>
 			</Box>
-			<Box w="100%" bg="blue.500" />
+			<Box w="100%" bg="blue.500">
+				<Wrap padding="2">
+					<Badge margin="1" colorScheme="green">1creator</Badge>
+					{users.map(user => (
+						<Badge margin="1">{user}</Badge>
+					))}
+				</Wrap>
+			</Box>
 		</Grid>
 	)
 }
